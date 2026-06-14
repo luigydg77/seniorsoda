@@ -11,13 +11,13 @@ import { getFirestore, doc, getDocFromServer } from "firebase/firestore";
  * Si deseas usar tu propia cuenta, edita este objeto o define tus variables .env.
  */
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "TU_API_KEY_AQUÍ",
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "TU_AUTH_DOMAIN_AQUÍ",
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "TU_PROJECT_ID_AQUÍ",
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "TU_STORAGE_BUCKET_AQUÍ",
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "TU_MESSAGING_SENDER_ID_AQUÍ",
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || "TU_APP_ID_AQUÍ",
-  databaseId: import.meta.env.VITE_FIREBASE_DATABASE_ID || undefined
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyCN_3w-mFt8C-S5UtsH3tcsYjjql0HhYlU",
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "gen-lang-client-0811460767.firebaseapp.com",
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "gen-lang-client-0811460767",
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "gen-lang-client-0811460767.firebasestorage.app",
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "261757690929",
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:261757690929:web:d48bd23e6856b46e68e110",
+  databaseId: import.meta.env.VITE_FIREBASE_DATABASE_ID || "ai-studio-db71a3a9-1e1c-4a7f-a876-74501d4de4c9"
 };
 
 // Comprobar si las credenciales son válidas y no son placeholders por defecto

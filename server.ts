@@ -6,7 +6,8 @@ import { fileURLToPath } from "url";
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getFirestore, collection, doc, getDocs, getDoc, setDoc, deleteDoc } from "firebase/firestore";
 
-const DB_FILE = path.join(process.cwd(), "db.json");
+// Base de datos local deshabilitada por solicitud del usuario
+// const DB_FILE = path.join(process.cwd(), "db.json");
 
 interface Product {
   id: string;
@@ -148,59 +149,31 @@ interface UserProfile {
   createdAt: string;
 }
 
-interface DataStore {
-  products: Product[];
-  orders: Order[];
-  users?: UserProfile[];
-}
-
-function loadData(): DataStore {
-  try {
-    if (fs.existsSync(DB_FILE)) {
-      const content = fs.readFileSync(DB_FILE, "utf-8");
-      const parsed = JSON.parse(content);
-      return {
-        products: parsed.products || DEFAULT_PRODUCTS,
-        orders: parsed.orders || [],
-        users: parsed.users || []
-      };
-    }
-  } catch (err) {
-    console.error("Error cargando db.json, usando valores por defecto", err);
-  }
-  return { products: DEFAULT_PRODUCTS, orders: [], users: [] };
-}
-
-function saveData(data: DataStore) {
-  try {
-    fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), "utf-8");
-  } catch (err) {
-    console.error("Error guardando datos en db.json", err);
-  }
-}
+// Lógica de persistencia local (db.json) deshabilitada para usar Firebase directo
+// interface DataStore { ... }
+// function loadData() { ... }
+// function saveData() { ... }
 
 // Inicializar Firebase si el archivo de configuración existe y es válido
 let firebaseApp: any = null;
 let firestoreDb: any = null;
 
 try {
-  // Usamos variables de entorno para evitar depender de archivos locales en producción
   const config = {
-    apiKey: process.env.FIREBASE_API_KEY || process.env.VITE_FIREBASE_API_KEY,
-    authDomain: process.env.FIREBASE_AUTH_DOMAIN || process.env.VITE_FIREBASE_AUTH_DOMAIN,
-    projectId: process.env.FIREBASE_PROJECT_ID || process.env.VITE_FIREBASE_PROJECT_ID,
-    storageBucket: process.env.FIREBASE_STORAGE_BUCKET || process.env.VITE_FIREBASE_STORAGE_BUCKET,
-    messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID || process.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-    appId: process.env.FIREBASE_APP_ID || process.env.VITE_FIREBASE_APP_ID,
+    apiKey: process.env.FIREBASE_API_KEY || process.env.VITE_FIREBASE_API_KEY || "AIzaSyCN_3w-mFt8C-S5UtsH3tcsYjjql0HhYlU",
+    authDomain: process.env.FIREBASE_AUTH_DOMAIN || process.env.VITE_FIREBASE_AUTH_DOMAIN || "gen-lang-client-0811460767.firebaseapp.com",
+    projectId: process.env.FIREBASE_PROJECT_ID || process.env.VITE_FIREBASE_PROJECT_ID || "gen-lang-client-0811460767",
+    storageBucket: process.env.FIREBASE_STORAGE_BUCKET || process.env.VITE_FIREBASE_STORAGE_BUCKET || "gen-lang-client-0811460767.firebasestorage.app",
+    messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID || process.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "261757690929",
+    appId: process.env.FIREBASE_APP_ID || process.env.VITE_FIREBASE_APP_ID || "1:261757690929:web:d48bd23e6856b46e68e110",
   };
 
-  const databaseId = process.env.FIREBASE_DATABASE_ID || process.env.VITE_FIREBASE_DATABASE_ID;
+  const databaseId = process.env.FIREBASE_DATABASE_ID || process.env.VITE_FIREBASE_DATABASE_ID || "ai-studio-db71a3a9-1e1c-4a7f-a876-74501d4de4c9";
 
   if (config.projectId && config.projectId !== "" && !config.projectId.includes("TU_PROJECT_ID")) {
     firebaseApp = initializeApp(config);
-    // Si databaseId es undefined, getFirestore usa "(default)" automáticamente
-    firestoreDb = databaseId ? getFirestore(firebaseApp, databaseId) : getFirestore(firebaseApp);
-    console.log(`🔥 Firebase configurado -> Proyecto: ${config.projectId}, Database: ${databaseId || "(default)"}`);
+    firestoreDb = getFirestore(firebaseApp, databaseId);
+    console.log(`🔥 Firebase configurado -> Proyecto: ${config.projectId}, Database: ${databaseId}`);
   }
 } catch (err) {
   console.error("Error al inicializar Firebase en el Servidor Express:", err);
@@ -225,158 +198,104 @@ async function seedFirebaseIfNeeded() {
 }
 
 async function findUserByPhone(phone: string): Promise<UserProfile | null> {
-  if (firestoreDb) {
-    try {
-      const docRef = doc(firestoreDb, "users", phone.trim().toLowerCase());
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        return docSnap.data() as UserProfile;
-      }
-    } catch (err) {
-      console.error("Error buscando usuario en Firestore, buscando en la base local:", err);
-    }
+  if (!firestoreDb) return null;
+  try {
+    const docRef = doc(firestoreDb, "users", phone.trim().toLowerCase());
+    const docSnap = await getDoc(docRef);
+    return docSnap.exists() ? (docSnap.data() as UserProfile) : null;
+  } catch (err) {
+    console.error("Error buscando usuario en Firestore:", err);
+    return null;
   }
-  const dbLocal = loadData();
-  const list = dbLocal.users || [];
-  const found = list.find((u: any) => u.phoneNumber.trim().toLowerCase() === phone.trim().toLowerCase());
-  return found || null;
 }
 
 async function saveUserProfile(user: UserProfile): Promise<void> {
-  if (firestoreDb) {
-    try {
-      const docRef = doc(firestoreDb, "users", user.phoneNumber.trim().toLowerCase());
-      await setDoc(docRef, user);
-    } catch (err) {
-      console.error("Error guardando usuario en Firestore, guardando localmente:", err);
-    }
+  if (!firestoreDb) return;
+  try {
+    const docRef = doc(firestoreDb, "users", user.phoneNumber.trim().toLowerCase());
+    await setDoc(docRef, user);
+  } catch (err) {
+    console.error("Error guardando usuario en Firestore:", err);
   }
-  const dbLocal = loadData();
-  if (!dbLocal.users) {
-    dbLocal.users = [];
-  }
-  const idx = dbLocal.users.findIndex((u: any) => u.phoneNumber.trim().toLowerCase() === user.phoneNumber.trim().toLowerCase());
-  if (idx !== -1) {
-    dbLocal.users[idx] = user;
-  } else {
-    dbLocal.users.push(user);
-  }
-  saveData(dbLocal);
 }
 
 async function getProducts(): Promise<Product[]> {
-  if (firestoreDb) {
-    try {
-      const col = collection(firestoreDb, "products");
-      const snap = await getDocs(col);
-      const list: Product[] = [];
-      snap.forEach((docSnap) => {
-        list.push(docSnap.data() as Product);
-      });
-      if (list.length > 0) {
-        return list.sort((a, b) => a.id.localeCompare(b.id));
-      }
-    } catch (err) {
-      console.error("Error jalando productos de Firestore, recurriendo a base local:", err);
-    }
+  if (!firestoreDb) return DEFAULT_PRODUCTS;
+  try {
+    const col = collection(firestoreDb, "products");
+    const snap = await getDocs(col);
+    const list: Product[] = [];
+    snap.forEach((docSnap) => {
+      list.push(docSnap.data() as Product);
+    });
+    return list.length > 0 ? list.sort((a, b) => a.id.localeCompare(b.id)) : DEFAULT_PRODUCTS;
+  } catch (err) {
+    console.error("Error al obtener productos de Firestore:", err);
+    return DEFAULT_PRODUCTS;
   }
-  return loadData().products;
 }
 
 async function saveProduct(product: Product): Promise<void> {
-  if (firestoreDb) {
-    try {
-      await setDoc(doc(firestoreDb, "products", product.id), product);
-    } catch (err) {
-      console.error("Error guardando producto en Firestore, recurriendo a base local:", err);
-    }
+  if (!firestoreDb) return;
+  try {
+    await setDoc(doc(firestoreDb, "products", product.id), product);
+  } catch (err) {
+    console.error("Error guardando producto en Firestore:", err);
   }
-  const dbLocal = loadData();
-  const idx = dbLocal.products.findIndex((p) => p.id === product.id);
-  if (idx !== -1) {
-    dbLocal.products[idx] = product;
-  } else {
-    dbLocal.products.push(product);
-  }
-  saveData(dbLocal);
 }
 
 async function removeProduct(id: string): Promise<void> {
-  if (firestoreDb) {
-    try {
-      await deleteDoc(doc(firestoreDb, "products", id));
-    } catch (err) {
-      console.error("Error eliminando producto de Firestore, recurriendo a base local:", err);
-    }
+  if (!firestoreDb) return;
+  try {
+    await deleteDoc(doc(firestoreDb, "products", id));
+  } catch (err) {
+    console.error("Error eliminando producto de Firestore:", err);
   }
-  const dbLocal = loadData();
-  dbLocal.products = dbLocal.products.filter((p) => p.id !== id);
-  saveData(dbLocal);
 }
 
 async function getOrders(): Promise<Order[]> {
-  if (firestoreDb) {
-    try {
-      const col = collection(firestoreDb, "orders");
-      const snap = await getDocs(col);
-      const list: Order[] = [];
-      snap.forEach((docSnap) => {
-        list.push(docSnap.data() as Order);
-      });
-      if (list.length > 0) {
-        return list.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-      }
-    } catch (err) {
-      console.error("Error jalando pedidos de Firestore, recurriendo a base local:", err);
-    }
+  if (!firestoreDb) return [];
+  try {
+    const col = collection(firestoreDb, "orders");
+    const snap = await getDocs(col);
+    const list: Order[] = [];
+    snap.forEach((docSnap) => {
+      list.push(docSnap.data() as Order);
+    });
+    return list.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  } catch (err) {
+    console.error("Error al obtener pedidos de Firestore:", err);
+    return [];
   }
-  return loadData().orders;
 }
 
 async function saveOrder(order: Order): Promise<void> {
-  if (firestoreDb) {
-    try {
-      await setDoc(doc(firestoreDb, "orders", order.id), order);
-    } catch (err) {
-      console.error("Error guardando pedido en Firestore, recurriendo a base local:", err);
-    }
+  if (!firestoreDb) return;
+  try {
+    await setDoc(doc(firestoreDb, "orders", order.id), order);
+  } catch (err) {
+    console.error("Error guardando pedido en Firestore:", err);
   }
-  const dbLocal = loadData();
-  if (!dbLocal.orders) {
-    dbLocal.orders = [];
-  }
-  const idx = dbLocal.orders.findIndex((o) => o.id === order.id);
-  if (idx !== -1) {
-    dbLocal.orders[idx] = order;
-  } else {
-    dbLocal.orders.unshift(order);
-  }
-  saveData(dbLocal);
 }
 
 async function resetDatabases(): Promise<void> {
-  if (firestoreDb) {
-    try {
-      const productsSnap = await getDocs(collection(firestoreDb, "products"));
-      for (const docSnap of productsSnap.docs) {
-        await deleteDoc(doc(firestoreDb, "products", docSnap.id));
-      }
-      const ordersSnap = await getDocs(collection(firestoreDb, "orders"));
-      for (const docSnap of ordersSnap.docs) {
-        await deleteDoc(doc(firestoreDb, "orders", docSnap.id));
-      }
-      for (const prod of DEFAULT_PRODUCTS) {
-        await setDoc(doc(firestoreDb, "products", prod.id), prod);
-      }
-    } catch (err) {
-      console.error("Error reseteando Firestore, recurriendo a local:", err);
+  if (!firestoreDb) return;
+  try {
+    const productsSnap = await getDocs(collection(firestoreDb, "products"));
+    for (const docSnap of productsSnap.docs) {
+      await deleteDoc(doc(firestoreDb, "products", docSnap.id));
     }
+    const ordersSnap = await getDocs(collection(firestoreDb, "orders"));
+    for (const docSnap of ordersSnap.docs) {
+      await deleteDoc(doc(firestoreDb, "orders", docSnap.id));
+    }
+    for (const prod of DEFAULT_PRODUCTS) {
+      await setDoc(doc(firestoreDb, "products", prod.id), prod);
+    }
+    console.log("✅ Firestore reseteado correctamente.");
+  } catch (err) {
+    console.error("Error reseteando Firestore:", err);
   }
-  const localDb = {
-    products: JSON.parse(JSON.stringify(DEFAULT_PRODUCTS)),
-    orders: []
-  };
-  saveData(localDb);
 }
 
 async function startServer() {
