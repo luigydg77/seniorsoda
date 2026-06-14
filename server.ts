@@ -6,10 +6,7 @@ import { fileURLToPath } from "url";
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getFirestore, collection, doc, getDocs, getDoc, setDoc, deleteDoc } from "firebase/firestore";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const DB_FILE = path.join(__dirname, "db.json");
+const DB_FILE = path.join(process.cwd(), "db.json");
 
 interface Product {
   id: string;
