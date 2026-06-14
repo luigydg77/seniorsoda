@@ -1,5 +1,6 @@
 import express from "express";
 import path from "path";
+import cors from "cors";
 import fs from "fs";
 import { createServer as createViteServer } from "vite";
 import { fileURLToPath } from "url";
@@ -301,6 +302,9 @@ async function resetDatabases(): Promise<void> {
 async function startServer() {
   const app = express();
   const PORT = process.env.PORT || 3000;
+
+  // Habilitar CORS para permitir peticiones desde el frontend o la App móvil
+  app.use(cors());
 
   // Sembrar datos iniciales si Firebase está configurado
   await seedFirebaseIfNeeded();

@@ -37,6 +37,8 @@ export default function MobileClient({
   whatsappUser, 
   setWhatsappUser 
 }: MobileClientProps) {
+  const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+
   // Navigation & Authentication states
   const [loginPhone, setLoginPhone] = useState('');
   const [otp, setOtp] = useState('');
@@ -168,7 +170,7 @@ export default function MobileClient({
         notes: deliveryNotes
       };
 
-      const res = await fetch('/api/orders', {
+      const res = await fetch(`${API_BASE_URL}/api/orders`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(orderData)

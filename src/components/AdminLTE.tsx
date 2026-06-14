@@ -62,6 +62,8 @@ export default function AdminLTE({
   currentUser,
   onLogout
 }: AdminLTEProps) {
+  const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+
   const isClientOnly = currentUser.role === 'cliente';
   const [activeTab, setActiveTab] = useState<'orders' | 'inventory' | 'analytics' | 'client'>(
     isClientOnly ? 'client' : 'orders'
@@ -119,7 +121,7 @@ export default function AdminLTE({
   // Status transitions
   const handleOrderStatusUpdate = async (orderId: string, newStatus: OrderStatus) => {
     try {
-      const res = await fetch(`/api/orders/${orderId}`, {
+      const res = await fetch(`${API_BASE_URL}/api/orders/${orderId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus })
@@ -136,7 +138,7 @@ export default function AdminLTE({
   const adjustStock = async (product: Product, amount: number) => {
     const newStock = Math.max(0, product.stock + amount);
     try {
-      const res = await fetch(`/api/products/${product.id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/products/${product.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ stock: newStock })
@@ -152,7 +154,7 @@ export default function AdminLTE({
   // Update product price & stock in editing mode
   const handleSaveProductEdit = async (productId: string) => {
     try {
-      const res = await fetch(`/api/products/${productId}`, {
+      const res = await fetch(`${API_BASE_URL}/api/products/${productId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
@@ -179,7 +181,7 @@ export default function AdminLTE({
 
   const executeDeleteProduct = async (id: string) => {
     try {
-      const res = await fetch(`/api/products/${id}`, { method: 'DELETE' });
+      const res = await fetch(`${API_BASE_URL}/api/products/${id}`, { method: 'DELETE' });
       if (res.ok) {
         onRefresh();
       }
@@ -214,7 +216,7 @@ export default function AdminLTE({
         description: formDescription
       };
 
-      const res = await fetch('/api/products', {
+      const res = await fetch(`${API_BASE_URL}/api/products`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(pData)
@@ -249,7 +251,7 @@ export default function AdminLTE({
 
   const executeResetDatabase = async () => {
     try {
-      const res = await fetch('/api/reset', { method: 'POST' });
+      const res = await fetch(`${API_BASE_URL}/api/reset`, { method: 'POST' });
       if (res.ok) {
         onRefresh();
         setShowAlertInfo('La base de datos se ha restaurado correctamente a sus valores iniciales.');

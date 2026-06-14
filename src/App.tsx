@@ -4,6 +4,8 @@ import AdminLTE from './components/AdminLTE';
 import { Product, Order, UserProfile } from './types';
 
 export default function App() {
+  const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+
   const [products, setProducts] = useState<Product[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
@@ -31,8 +33,8 @@ export default function App() {
     if (!isSilent) setLoading(true);
     try {
       const [prodRes, ordRes] = await Promise.all([
-        fetch('/api/products'),
-        fetch('/api/orders')
+        fetch(`${API_BASE_URL}/api/products`),
+        fetch(`${API_BASE_URL}/api/orders`)
       ]);
 
       if (!prodRes.ok || !ordRes.ok) {
@@ -78,7 +80,7 @@ export default function App() {
 
     setAuthLoading(true);
     try {
-      const res = await fetch('/api/users/login', {
+      const res = await fetch(`${API_BASE_URL}/api/users/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phoneNumber: formattedPhone })
@@ -120,7 +122,7 @@ export default function App() {
 
     setAuthLoading(true);
     try {
-      const res = await fetch('/api/users/register', {
+      const res = await fetch(`${API_BASE_URL}/api/users/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
