@@ -1,0 +1,101 @@
+{
+  "products": [
+    {
+      "id": "prod-1",
+      "name": "Coca-Cola Original 3L",
+      "category": "Gaseosas",
+      "price": 32.40,
+      "originalPrice": 36.00,
+      "packSize": 6,
+      "unitType": "Botellas 3L",
+      "stock": 40,
+      "imageUrl": "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=500&auto=format&fit=crop&q=80",
+      "description": "Paquete de 6 botellas familiares de Coca-Cola de 3 Litros. ¡Ideal para tiendas y restaurantes!"
+    },
+    {
+      "id": "prod-2",
+      "name": "Inca Kola 2.25L",
+      "category": "Gaseosas",
+      "price": 23.80,
+      "originalPrice": 28.00,
+      "packSize": 6,
+      "unitType": "Botellas 2.25L",
+      "stock": 35,
+      "imageUrl": "https://images.unsplash.com/photo-1625772291427-39f7040dc411?w=500&auto=format&fit=crop&q=80",
+      "description": "Paquete de 6 botellas retornables de Inca Kola de 2.25 Litros."
+    },
+    {
+      "id": "prod-3",
+      "name": "Fanta Naranja Cans",
+      "category": "Gaseosas",
+      "price": 19.20,
+      "originalPrice": 24.00,
+      "packSize": 24,
+      "unitType": "Latas",
+      "stock": 50,
+      "imageUrl": "https://images.unsplash.com/photo-1624552184280-9e9631bbeee9?w=500&auto=format&fit=crop&q=80",
+      "description": "Caja de 24 latas de Fanta Naranja de 355ml. Bebidas listas para refrigerar."
+    },
+    {
+      "id": "prod-4",
+      "name": "Frugos del Valle Durazno 1L",
+      "category": "Jugos",
+      "price": 18.70,
+      "originalPrice": 22.00,
+      "packSize": 12,
+      "unitType": "Botellas 1L",
+      "stock": 30,
+      "imageUrl": "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=500&auto=format&fit=crop&q=80",
+      "description": "Caja de 12 botellas de un litro de néctar de durazno premium."
+    },
+    {
+      "id": "prod-5",
+      "name": "Petit Jugo de Naranja 250ml",
+      "category": "Jugos",
+      "price": 12.00,
+      "originalPrice": 15.00,
+      "packSize": 24,
+      "unitType": "Jugos Pequeños",
+      "stock": 45,
+      "imageUrl": "https://images.unsplash.com/photo-1613478223719-2ab802602423?w=500&auto=format&fit=crop&q=80",
+      "description": "Caja de 24 juguitos pequeños de naranja de 250ml, perfectos para loncheras y tiendas."
+    },
+    {
+      "id": "prod-6",
+      "name": "Jugo de Manzana Express 330ml",
+      "category": "Jugos",
+      "price": 15.30,
+      "originalPrice": 18.00,
+      "packSize": 12,
+      "unitType": "Latas de Jugo",
+      "stock": 25,
+      "imageUrl": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500&auto=format&fit=crop&q=80",
+      "description": "Caja de 12 latas de zumo de manzana verde fresca prensado en frío."
+    },
+    {
+      "id": "prod-7",
+      "name": "Agua Alpina sin gas 600ml",
+      "category": "Aguas y Energizantes",
+      "price": 9.60,
+      "originalPrice": 12.00,
+      "packSize": 24,
+      "unitType": "Botellas sin gas",
+      "stock": 80,
+      "imageUrl": "https://images.unsplash.com/photo-1608885898957-a599fb16ec17?w=500&auto=format&fit=crop&q=80",
+      "description": "Paquete de 24 botellas de agua purificada de 600ml. Hidratación al por mayor."
+    },
+    {
+      "id": "prod-8",
+      "name": "Red Bull Energy Drink 250ml",
+      "category": "Aguas y Energizantes",
+      "price": 48.00,
+      "originalPrice": 60.00,
+      "packSize": 24,
+      "unitType": "Latas",
+      "stock": 20,
+      "imageUrl": "https://images.unsplash.com/photo-1622443953490-0b7ce3535d74?w=500&auto=format&fit=crop&q=80",
+      "description": "Caja de 24 latas de bebida energizante de 250ml para vitalizar cuerpo y mente."
+    }
+  ],
+  "orders": []
+}

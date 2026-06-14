@@ -1,21 +1,8 @@
-# Dependencias
 node_modules/
-
-# Carpeta de compilación
+build/
 dist/
-
-# Logs de errores
+coverage/
+.DS_Store
 *.log
-firebase-debug.log*
-
-# Archivos de Firebase CLI
-.firebase/
-
-# Configuraciones sensibles y variables de entorno
-.env
-.env.local
-firebase-applet-config.json
-
-# Base de datos local
-# Comenta la línea de abajo si quieres que db.json se suba con los datos iniciales
-db.json
+.env*
+!.env.example

@@ -187,14 +187,22 @@ let firebaseApp: any = null;
 let firestoreDb: any = null;
 
 try {
-  const configPath = path.join(__dirname, "firebase-applet-config.json");
-  if (fs.existsSync(configPath)) {
-    const config = JSON.parse(fs.readFileSync(configPath, "utf-8"));
-    if (config.projectId && config.projectId !== "" && !config.projectId.includes("TU_PROJECT_ID")) {
-      firebaseApp = initializeApp(config);
-      firestoreDb = getFirestore(firebaseApp, config.firestoreDatabaseId);
-      console.log("🔥 Firebase inicializado con éxito en el Servidor Express. DatabaseId:", config.firestoreDatabaseId);
-    }
+  // Usamos variables de entorno para evitar depender de archivos locales en producción
+  const config = {
+    apiKey: process.env.FIREBASE_API_KEY || process.env.VITE_FIREBASE_API_KEY,
+    authDomain: process.env.FIREBASE_AUTH_DOMAIN || process.env.VITE_FIREBASE_AUTH_DOMAIN,
+    projectId: process.env.FIREBASE_PROJECT_ID || process.env.VITE_FIREBASE_PROJECT_ID,
+    storageBucket: process.env.FIREBASE_STORAGE_BUCKET || process.env.VITE_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID || process.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+    appId: process.env.FIREBASE_APP_ID || process.env.VITE_FIREBASE_APP_ID,
+  };
+
+  const databaseId = process.env.FIREBASE_DATABASE_ID || process.env.VITE_FIREBASE_DATABASE_ID;
+
+  if (config.projectId && config.projectId !== "" && !config.projectId.includes("TU_PROJECT_ID")) {
+    firebaseApp = initializeApp(config);
+    firestoreDb = getFirestore(firebaseApp, databaseId);
+    console.log("🔥 Firebase inicializado con éxito en el Servidor Express. DatabaseId:", databaseId || "default");
   }
 } catch (err) {
   console.error("Error al inicializar Firebase en el Servidor Express:", err);
@@ -375,7 +383,7 @@ async function resetDatabases(): Promise<void> {
 
 async function startServer() {
   const app = express();
-  const PORT = 3000;
+  const PORT = process.env.PORT || 3000;
 
   // Sembrar datos iniciales si Firebase está configurado
   await seedFirebaseIfNeeded();
@@ -659,7 +667,7 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, "0.0.0.0", () => {
+  app.listen(Number(PORT), "0.0.0.0", () => {
     console.log(`Server running at http://localhost:${PORT}`);
   });
 }
