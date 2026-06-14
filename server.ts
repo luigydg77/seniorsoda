@@ -198,8 +198,9 @@ try {
 
   if (config.projectId && config.projectId !== "" && !config.projectId.includes("TU_PROJECT_ID")) {
     firebaseApp = initializeApp(config);
-    firestoreDb = getFirestore(firebaseApp, databaseId);
-    console.log("🔥 Firebase inicializado con éxito en el Servidor Express. DatabaseId:", databaseId || "default");
+    // Si databaseId es undefined, getFirestore usa "(default)" automáticamente
+    firestoreDb = databaseId ? getFirestore(firebaseApp, databaseId) : getFirestore(firebaseApp);
+    console.log(`🔥 Firebase configurado -> Proyecto: ${config.projectId}, Database: ${databaseId || "(default)"}`);
   }
 } catch (err) {
   console.error("Error al inicializar Firebase en el Servidor Express:", err);
