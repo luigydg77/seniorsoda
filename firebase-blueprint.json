@@ -1,0 +1,64 @@
+{
+  "entities": {
+    "Product": {
+      "title": "Product",
+      "description": "Un producto de bebida o jugo disponible para la venta",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "ID único del producto" },
+        "name": { "type": "string", "description": "Nombre del producto" },
+        "category": { "type": "string", "enum": ["Gaseosas", "Jugos", "Aguas y Energizantes"] },
+        "price": { "type": "number", "description": "Precio de venta" },
+        "originalPrice": { "type": "number", "description": "Precio original" },
+        "packSize": { "type": "number", "description": "Cantidad de unidades por caja" },
+        "unitType": { "type": "string", "description": "Tipo de unidad (ej. Latas, Botellas)" },
+        "stock": { "type": "number", "description": "Cantidad en inventario" },
+        "imageUrl": { "type": "string", "description": "Enlace a la imagen del producto" },
+        "description": { "type": "string", "description": "Descripción del producto" }
+      },
+      "required": ["id", "name", "category", "price", "stock"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "Una orden de pedido realizada por el usuario",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "ID autogenerado del pedido" },
+        "whatsappNumber": { "type": "string", "description": "Número de WhatsApp registrado" },
+        "items": { "type": "string", "description": "JSON serializado o arreglo representativo de productos comprados" },
+        "total": { "type": "number", "description": "Total de la orden" },
+        "status": { "type": "string", "enum": ["Pendiente", "Preparando", "En Camino", "Entregado", "Cancelado"] },
+        "createdAt": { "type": "string", "description": "Fecha de creación del pedido" },
+        "deliveryAddress": { "type": "string", "description": "Dirección de entrega" },
+        "notes": { "type": "string", "description": "Notas opcionales del cliente" }
+      },
+      "required": ["id", "whatsappNumber", "total", "status", "createdAt", "deliveryAddress"]
+    },
+    "User": {
+      "title": "User",
+      "description": "Un usuario registrado mediante WhatsApp en el sistema",
+      "type": "object",
+      "properties": {
+        "phoneNumber": { "type": "string", "description": "Número de teléfono celular / WhatsApp utilizado como ID único" },
+        "fullName": { "type": "string", "description": "Nombre y apellido completo del usuario" },
+        "role": { "type": "string", "enum": ["admin", "cliente"] },
+        "createdAt": { "type": "string", "description": "Fecha de registro" }
+      },
+      "required": ["phoneNumber", "fullName", "role", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/products/{productId}": {
+      "schema": "Product",
+      "description": "Colección de productos y stock"
+    },
+    "/orders/{orderId}": {
+      "schema": "Order",
+      "description": "Colección de pedidos recibidos"
+    },
+    "/users/{phoneNumber}": {
+      "schema": "User",
+      "description": "Colección de usuarios con sus perfiles y roles"
+    }
+  }
+}

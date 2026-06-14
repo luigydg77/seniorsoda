@@ -1,0 +1,6 @@
+{
+  "name": "Pedido de Bebidas y Admin LTE",
+  "description": "Aplicación móvil de pedidos de bebidas junto con un panel de administración en tiempo real estilo AdminLTE para el control de inventario y seguimiento de órdenes.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
